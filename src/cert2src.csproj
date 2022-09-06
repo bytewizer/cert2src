@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>cert2src</AssemblyName>
+    <Authors>Microcompiler</Authors>
+    <Company>Bytewizer Technology</Company>
+    <PackageProjectUrl>https://github.com/bytewizer/cert2src.git</PackageProjectUrl>
+    <PackageIcon>package-logo.png</PackageIcon>
+	<PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE.md">
+      <Pack>True</Pack>
+      <PackagePath>"$(PackageLicenseFile)"</PackagePath>
+    </None>
+    <None Include="..\images\package-logo.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>

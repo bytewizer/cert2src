@@ -1,0 +1,54 @@
+name: Build
+
+on:
+  push:
+    branches:
+    - main
+    paths: 
+      - '**'
+      - '!.editorconfig'
+      - '!.gitattributes'
+      - '!.gitignore'
+      - '!*.md'
+      - '!LICENSE'
+
+env:
+  VERBOSITY:  'Normal'
+  CONFIGURATION: 'Debug'
+  
+jobs: 
+  Build:
+    name: Build Console Application   
+    runs-on: [windows-latest]
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+
+    - name: Extract build information into variables
+      id: info
+      run: |
+        echo "##[set-output name=build;]$(echo $(git rev-list --count HEAD))"
+        echo "##[set-output name=copyright;]$(echo © $(date -u +%Y) Bytewizer.  All rights reserved.)"
+
+    - name: Show build information
+      run: |
+        echo build=${{ steps.info.outputs.build }}
+        echo copyright=${{ steps.info.outputs.copyright }}
+  
+    - name: Build and publish application
+      working-directory: src
+      run: >- 
+        dotnet publish Bytewizer.Bytewizer.Cert2Src.sln -r win-x64 -verbosity:${env:VERBOSITY}
+        -p:PackageOutputPath=\builds\artifacts
+        -p:BuildNumber="${{ steps.info.outputs.build }}"
+        -p:Copyright="${{ steps.info.outputs.copyright }}"
+        -p:VersionPrefix="2.1.15"
+        -p:VersionSuffix=preview.${{ steps.info.outputs.build }}
+        -p:Configuration=${env:CONFIGURATION}
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v2.3.1
+      with:
+        name: Build Packages ${{ steps.info.outputs.build }} 
+        path: \builds\artifacts
