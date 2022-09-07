@@ -10,6 +10,7 @@ env:
   VERBOSITY:  'Normal'
   CONFIGURATION: 'Release'
   ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
+  DOTNET_NOLOGO: 'true'
   DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 'true'
   GITHUB_TOKEN: ${{ github.token }}
@@ -67,10 +68,9 @@ jobs:
     
     - name: Upload release artifacts
       uses: actions/upload-artifact@v3
-
       with:
         name: release-win64
-        path: \builds\artifacts\*.exe
+        path: \builds\artifacts\
     
     - name: Create release asset
       run: Compress-Archive -DestinationPath \builds\release-win64.zip -Path \builds\artifacts\*.exe
