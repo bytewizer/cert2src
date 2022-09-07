@@ -56,7 +56,7 @@ jobs:
         -p:IncludeNativeLibrariesForSelfExtract=true 
         -p:PublishTrimmed=True 
         -p:TrimMode=link
-        -p:PackageOutputPath=\builds\artifacts
+        -p:PublishDir=\builds\artifacts
         -p:BuildNumber="${{ steps.info.outputs.build }}"
         -p:Copyright="${{ steps.info.outputs.copyright }}"
         -p:VersionPrefix="${{ steps.info.outputs.version }}"
@@ -64,7 +64,8 @@ jobs:
         -p:Configuration=${env:CONFIGURATION}
     
     - name: Upload release artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
+
       with:
         name: Release Packages
         path: \builds\artifacts
