@@ -73,7 +73,7 @@ jobs:
         path: \builds\artifacts\*.exe
     
     - name: Create release asset
-      run: Compress-Archive -DestinationPath \builds\release-win-x64.zip -Path \builds\artifacts\*.exe
+      run: Compress-Archive -DestinationPath \builds\release-win64.zip -Path \builds\artifacts\*.exe
       
     - name: Upload release asset
       uses: actions/upload-release-asset@v1.0.1
