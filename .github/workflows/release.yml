@@ -1,0 +1,83 @@
+name: Release
+
+on:
+  release:
+    branches: 
+    - main
+    types: [published]
+
+env:
+  VERBOSITY:  'Normal'
+  CONFIGURATION: 'Release'
+  ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
+  GITHUB_TOKEN: ${{ github.token }}
+  
+jobs:
+  Release:
+    name: Publish Release
+    runs-on: [windows-latest]
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 6.0.x
+
+    - name: Extract build information into variables
+      id: info
+      run: |
+        echo "##[set-output name=version;]$(echo $env:GITHUB_REF.Replace('refs/tags/v',''))"
+        echo "##[set-output name=build;]$(echo $(git rev-list --count HEAD))"
+        echo "##[set-output name=copyright;]$(echo © $(date -u +%Y) Bytewizer.  All rights reserved.)" 
+    
+    - name: Show build information
+      run: |
+        echo build=${{ steps.info.outputs.build }}
+        echo copyright=${{ steps.info.outputs.copyright }}
+    
+    - name: Show release event information
+      run: |
+        echo "release.name        = ${{ github.event.release.name }}"
+        echo "release.body        = ${{ github.event.release.body }}"
+        echo "release.upload_url  = ${{ github.event.release.upload_url }}"
+        echo "release.html_url    = ${{ github.event.release.html_url }}"
+        echo "release.tag_name    = ${{ github.event.release.tag_name }}"
+        echo "release.draft       = ${{ github.event.release.draft }}"
+        echo "release.prerelease  = ${{ github.event.release.prerelease }}"
+       
+    - name: Release application
+      working-directory: src
+      run: >- 
+        dotnet publish Bytewizer.Cert2Src.sln -r win-x64 -verbosity:${env:VERBOSITY} --self-contained true 
+        -p:PublishSingleFile=true 
+        -p:IncludeNativeLibrariesForSelfExtract=true 
+        -p:PublishTrimmed=True 
+        -p:TrimMode=link
+        -p:PackageOutputPath=\builds\artifacts
+        -p:BuildNumber="${{ steps.info.outputs.build }}"
+        -p:Copyright="${{ steps.info.outputs.copyright }}"
+        -p:VersionPrefix="${{ steps.info.outputs.version }}"
+        -p:PackageVersion="${{ steps.info.outputs.version }}"
+        -p:Configuration=${env:CONFIGURATION}
+    
+    - name: Upload release artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: Release Packages
+        path: \builds\artifacts
+    
+    - name: Create release asset
+      run: Compress-Archive -DestinationPath \builds\release-win-x64.zip -Path \builds\artifacts\*.exe
+      
+    # - name: Upload release asset
+    #   uses: actions/upload-release-asset@v1.0.1
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   with:
+    #     upload_url: ${{ github.event.release.upload_url }}
+    #     asset_path: \builds\release-win-x64.zip
+    #     asset_name: Packages
+    #     asset_content_type: application/zip

@@ -1,13 +1,13 @@
 # cert2src
 
-[![Build](https://github.com/bytewizer/runtime/actions/workflows/actions.yml/badge.svg)](https://github.com/bytewizer/runtime/actions/workflows/actions.yml)
+[![Release](https://github.com/bytewizer/cert2src/actions/workflows/release.yml/badge.svg)](https://github.com/bytewizer/cert2src/actions/workflows/release.yml)
 
-This is a simple utility for download and converting / export root certificates required for [GHI Electronics TinyCLR OS](https://www.ghielectronics.com/) to access secure websites.
+This is a simple command line utility for download and converting root certificates required for [TinyCLR OS](https://www.ghielectronics.com/) to access secure sites.
 
 ```
 Usage: cert2src url [options]
 
-Download and export root certificates required for TinyCLR OS to access secure websites.
+Download and export root certificates required for TinyCLR OS to access secure sites.
 
 options:
  --help        Displays general help information about other commands.
@@ -15,11 +15,12 @@ options:
  --code        Set output format as csharp source code array.
  --width       Width of the source code array output (default 18).
 ```
-Note: if you do not provide a 'path' it will default to the current path.
+Note: you can included the --path flag without a path and it will default to the executable path location.
 
 ## Examples
+
 ```
-C:\project>cert2src https://www.google.com --path
+C:\project>cert2src.exe https://www.google.com --path
 
 -----BEGIN CERTIFICATE-----
 MIIDdTCCAl2gAwIBAgILBAAAAAABFUtaw5QwDQYJKoZIhvcNAQEFBQAwVzELMAkGA1UEBhMCQkUx
@@ -36,7 +37,7 @@ Root certificate downloaded from 'https://www.google.com/'
 ```
 
 ```
-C:\project>cert2src https://www.google.com --path -code -width 10
+C:\project>cert2src.exe https://www.google.com --path -code -width 10
 
 private static readonly byte[] Certificate =
 {
@@ -46,17 +47,12 @@ private static readonly byte[] Certificate =
      [Intentionally omitted]
 
      0x2d, 0x2d, 0x2d, 0x2d, 0x45, 0x4e, 0x44, 0x20, 0x43, 0x45,
-     0x52, 0x54, 0x49, 0x46, 0x49, 0x43, 0x41, 0x54, 0x45, 0x2d,
      0x2d, 0x2d, 0x2d, 0x2d, 0x0d, 0x0a
 };
 
 Root certificate successfully exported to 'C:\project\certificate.cs'
 Root certificate downloaded from 'https://www.google.com/'
 ```
-
-## Requirements
-
-Software: <a href="https://visualstudio.microsoft.com/downloads/">Visual Studio 2019/2022</a> and <a href="https://www.ghielectronics.com/">GHI Electronics TinyCLR OS</a> 
 
 ## Contributions
 

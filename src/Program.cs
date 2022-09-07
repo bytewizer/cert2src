@@ -75,7 +75,7 @@ namespace Bytewizer.Commandline
             request.ServerCertificateValidationCallback = ServerCertificateValidationCallback;
 
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-  
+
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 Console.WriteLine($"Root certificate downloaded from '{url}'");
@@ -152,7 +152,7 @@ namespace Bytewizer.Commandline
                 {
                     continue;
                 }
-                
+
                 if (parameters.TryGetValue(arg, out var callback))
                 {
                     currentCallback?.Invoke(null);
@@ -177,16 +177,9 @@ namespace Bytewizer.Commandline
         {
             StringBuilder builder = new StringBuilder();
 
-            try
-            {
-                builder.AppendLine("-----BEGIN CERTIFICATE-----");
-                builder.AppendLine(Convert.ToBase64String(cert.Export(X509ContentType.Cert), Base64FormattingOptions.InsertLineBreaks));
-                builder.AppendLine("-----END CERTIFICATE-----");
-
-            }
-            catch (Exception)
-            {
-            }
+            builder.AppendLine("-----BEGIN CERTIFICATE-----");
+            builder.AppendLine(Convert.ToBase64String(cert.Export(X509ContentType.Cert), Base64FormattingOptions.InsertLineBreaks));
+            builder.AppendLine("-----END CERTIFICATE-----");
 
             return builder.ToString();
         }
@@ -227,7 +220,7 @@ namespace Bytewizer.Commandline
 
             return builder.ToString();
         }
-        
+
         private static void ShowHelp()
         {
             var name = AppDomain.CurrentDomain.FriendlyName;
