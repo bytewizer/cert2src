@@ -74,7 +74,7 @@ namespace Bytewizer.Commandline
             request.AllowAutoRedirect = false;
             request.ServerCertificateValidationCallback = ServerCertificateValidationCallback;
 
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            var response = (HttpWebResponse)request.GetResponse();
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
@@ -108,12 +108,6 @@ namespace Bytewizer.Commandline
             }
             else
             {
-                if (!Directory.Exists(_path))
-                {
-                    Console.Error.WriteLine($"The directory '{_path}' does not exist.");
-                    Environment.Exit(1);
-                }
-
                 if (_code == false)
                 {
                     var cert = ExportToPem(chainRoot);
@@ -135,9 +129,22 @@ namespace Bytewizer.Commandline
 
         private static void SaveCertificate(string path, string filename, string cert)
         {
-            var fullPath = Path.Combine(path, filename);
+            var fullPath = path;
 
-            File.WriteAllText(fullPath, cert);
+            if (!Path.HasExtension(path))
+            {
+                fullPath = Path.Combine(path, filename);
+            }
+
+            try
+            {
+                File.WriteAllText(fullPath, cert);
+            }
+            catch(Exception ex)
+            {
+                Console.Error.WriteLine(ex.Message);
+                Environment.Exit(1);
+            }
 
             Console.WriteLine($"Root certificate successfully exported to '{fullPath}'");
         }
@@ -227,7 +234,7 @@ namespace Bytewizer.Commandline
             var version = Assembly.GetEntryAssembly()?.GetName().Version;
 
             Console.WriteLine($"{name} Version: {version}");
-            Console.WriteLine($"Usage: {name} url [options]");
+            Console.WriteLine($"Usage: {name}.exe url [options]");
             Console.WriteLine();
             Console.WriteLine("Download and export root certificates required for TinyCLR OS to access secure sites.");
             Console.WriteLine();
