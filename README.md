@@ -40,7 +40,6 @@ Root certificate successfully exported to 'C:\project\certificate.crt'
 Root certificate downloaded from 'https://www.google.com/'
 ```
 
-or exported in a csharp source code array easly added to a project.
 ```
 C:\project>cert2src.exe https://www.google.com --path -code -width 10
 
