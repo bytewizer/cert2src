@@ -2,7 +2,7 @@
 
 [![Release](https://github.com/bytewizer/cert2src/actions/workflows/release.yml/badge.svg)](https://github.com/bytewizer/cert2src/actions/workflows/release.yml)
 
-This is a simple command line utility for download and converting root certificates required for [TinyCLR OS](https://www.ghielectronics.com/) to access secure sites.
+This is a simple command line utility for download and exporting the chain root certificates required for [TinyCLR OS](https://www.ghielectronics.com/) to access secure sites.  Certificate can be exported in Security Certificate File Format (crt) commonly embedded as a binary project resource or a csharp source code array easly added to a project as source code.
 
 ```
 Usage: cert2src url [options]
@@ -15,7 +15,11 @@ options:
  --code        Set output format as csharp source code array.
  --width       Width of the source code array output (default 18).
 ```
-Note: you can included the --path flag without a path and it will default to the executable path location.
+Note: you can included the --path flag without a path and it will default to the executable path location. 
+
+## Installation
+
+Download the latest [release-win64.zip](https://github.com/bytewizer/cert2src/releases)  file and unzip to a local working directory.
 
 ## Examples
 
@@ -36,6 +40,7 @@ Root certificate successfully exported to 'C:\project\certificate.crt'
 Root certificate downloaded from 'https://www.google.com/'
 ```
 
+or exported in a csharp source code array easly added to a project.
 ```
 C:\project>cert2src.exe https://www.google.com --path -code -width 10
 
