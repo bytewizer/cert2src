@@ -78,6 +78,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
-        asset_path: \builds\cert2src.exe
+        asset_path: \builds\artifacts\cert2src.exe
         asset_name: cert2src.exe
         asset_content_type: application/exe
