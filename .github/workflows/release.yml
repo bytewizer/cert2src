@@ -56,7 +56,6 @@ jobs:
       run: >- 
         dotnet publish Bytewizer.Cert2Src.sln -r win-x64 -verbosity:${env:VERBOSITY} --self-contained true 
         -p:PublishSingleFile=true
-        -p:EnableCompressionInSingleFile=true 
         -p:IncludeNativeLibrariesForSelfExtract=true 
         -p:PublishTrimmed=true 
         -p:TrimMode=link
