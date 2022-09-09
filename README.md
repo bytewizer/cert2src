@@ -19,7 +19,7 @@ Note: you can included the --path flag without a path and it will default to the
 
 ## Installation
 
-Download the latest [release-win64.zip](https://github.com/bytewizer/cert2src/releases)  file and unzip to a local working directory.
+Download the latest [cert2src.exe](https://github.com/bytewizer/cert2src/releases)  file and unzip to a local working directory.
 
 ## Examples
 

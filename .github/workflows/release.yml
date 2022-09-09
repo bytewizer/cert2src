@@ -71,9 +71,6 @@ jobs:
       with:
         name: release-win64
         path: \builds\artifacts\
-    
-    - name: Create release asset
-      run: Compress-Archive -DestinationPath \builds\release-win64.zip -Path \builds\artifacts\*.exe
       
     - name: Upload release asset
       uses: actions/upload-release-asset@v1.0.1
@@ -81,6 +78,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
-        asset_path: \builds\release-win64.zip
-        asset_name: release-win64.zip
-        asset_content_type: application/zip
+        asset_path: \builds\cert2src.exe
+        asset_name: cert2src.exe
+        asset_content_type: application/exe
