@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Threading;
+﻿using System.Threading;
 using System.Diagnostics;
 
 using GHIElectronics.TinyCLR.Pins;
@@ -19,22 +17,16 @@ namespace Bytewizer.TlsClient
         {
             var resetPin = GpioController.GetDefault().OpenPin(SC20260.GpioPin.PG3);
             resetPin.SetDriveMode(GpioPinDriveMode.Output);
-
-            resetPin.Write(GpioPinValue.Low);
-            Thread.Sleep(100);
-
             resetPin.Write(GpioPinValue.High);
-            Thread.Sleep(100);
 
             Controller = NetworkController.FromName(SC20260.NetworkController.EthernetEmac);
             Controller.SetCommunicationInterfaceSettings(new BuiltInNetworkCommunicationInterfaceSettings());
             Controller.SetInterfaceSettings(new EthernetNetworkInterfaceSettings()
             {
-                DhcpEnable = true,
-                DynamicDnsEnable = true,
                 MacAddress = new byte[6] { 0x00, 0x8D, 0xB4, 0x49, 0xAD, 0xBD }
             });
             Controller.SetAsDefaultController();
+
             Controller.NetworkAddressChanged += NetworkController_NetworkAddressChanged;
             Controller.Enable();
 
