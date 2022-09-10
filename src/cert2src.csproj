@@ -8,9 +8,11 @@
     <AssemblyName>cert2src</AssemblyName>
     <Authors>Microcompiler</Authors>
     <Company>Bytewizer Technology</Company>
-    <PackageProjectUrl>https://github.com/bytewizer/cert2src.git</PackageProjectUrl>
+    <PackageProjectUrl></PackageProjectUrl>
     <PackageIcon>package-logo.png</PackageIcon>
 	<PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+	<SignAssembly>False</SignAssembly>
+	<RepositoryUrl>https://github.com/bytewizer/cert2src.git</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>

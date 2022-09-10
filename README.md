@@ -5,7 +5,7 @@
 This is a simple command line utility for download and exporting the chain root certificates required for [TinyCLR OS](https://www.ghielectronics.com/) to access secure sites.  Certificate can be exported in Security Certificate File Format (crt) commonly embedded as a binary project resource or a csharp source code array easly added to a project as source code.
 
 ```
-Usage: cert2src url [options]
+Usage: cert2src.exe url [options]
 
 Download and export root certificates required for TinyCLR OS to access secure sites.
 
@@ -14,6 +14,8 @@ options:
  --path        Output chain root certificate as base-64 encoded PEM format to file.
  --code        Set output format as csharp source code array.
  --width       Width of the source code array output (default 18).
+ --namespace   Namespace used when creating code array output.
+ --classname   Class name structure used when creating code array output.
 ```
 Note: you can included the --path flag without a path and it will default to the executable path location. 
 
@@ -41,7 +43,7 @@ Root certificate downloaded from 'https://www.google.com/'
 ```
 
 ```
-C:\project>cert2src.exe https://www.google.com --path -code -width 10
+C:\project>cert2src.exe https://www.google.com --path --code --width 10
 
 private static readonly byte[] Certificate =
 {
@@ -56,6 +58,14 @@ private static readonly byte[] Certificate =
 
 Root certificate successfully exported to 'C:\project\certificate.cs'
 Root certificate downloaded from 'https://www.google.com/'
+```
+
+## Project Files
+Automate the updating of project resources by adding a command target to the bottom of your project <c>.csproj</c> file. 
+```
+<Target Name="GetSSLCert" BeforeTargets="PrepareForBuild">
+  <Exec Command="$(SolutionDir)tools\cert2src.exe https://api.host.com --path $(ProjectDir)Resources" />
+</Target>
 ```
 
 ## Contributions

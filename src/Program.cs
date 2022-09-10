@@ -1,7 +1,7 @@
 ﻿using System.Net;
-using System.Net.Security;
 using System.Text;
 using System.Reflection;
+using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 
 namespace Bytewizer.Commandline
@@ -11,31 +11,23 @@ namespace Bytewizer.Commandline
     public static class Cert2Src
     {
         private static int _width = 18;
+        private static string _namespace = null;
+        private static string _classname = null;
         private static bool _code = false;
         private static string? _path = null;
 
         public static int Main(string[] args)
         {
             var parameters = new Parameters {
-                {"--Help", x => ShowHelp()},
                 {"--help", x => ShowHelp()},
-                {"-help", x => ShowHelp()},
-                {"-h", x => ShowHelp()},
-                {"--Path", x => _path = x ??= AppDomain.CurrentDomain.BaseDirectory},
                 {"--path", x => _path = x ??= AppDomain.CurrentDomain.BaseDirectory},
-                {"-path", x => _path = x ??= AppDomain.CurrentDomain.BaseDirectory},
-                {"-p", x => _path = x ??= AppDomain.CurrentDomain.BaseDirectory},
-                {"--Code", _ => _code = true},
                 {"--code", _ => _code = true},
-                {"-code", _ => _code = true},
-                {"-c", _ => _code = true},
-                {"--Width", x => _width = int.Parse(x)},
                 {"--width", x => _width = int.Parse(x)},
-                {"-width", x => _width = int.Parse(x)},
-                {"-w", x => _width = int.Parse(x)},
+                {"--namespace", x => _namespace = x},
+                {"--classname", x => _classname = x}
             };
 
-            if (args.Length == 0)
+            if (args.Length == 0 || args[0].Equals("/?") || args[0].Equals("--help"))
             {
                 ShowHelp();
             }
@@ -149,6 +141,80 @@ namespace Bytewizer.Commandline
             Console.WriteLine($"Root certificate successfully exported to '{fullPath}'");
         }
 
+        public static string ExportToPem(X509Certificate2 cert)
+        {
+            StringBuilder builder = new StringBuilder();
+
+            builder.AppendLine("-----BEGIN CERTIFICATE-----");
+            builder.AppendLine(Convert.ToBase64String(cert.Export(X509ContentType.Cert), Base64FormattingOptions.InsertLineBreaks));
+            builder.AppendLine("-----END CERTIFICATE-----");
+
+            return builder.ToString();
+        }
+
+        public static string ExportToCsharp(X509Certificate2 cert)
+        {
+            StringBuilder builder = new StringBuilder();
+
+            var content = ExportToPem(cert);
+
+            if (_namespace != null)
+            {
+                builder.AppendLine(_namespace);
+                builder.AppendLine("{");
+            }
+
+            if (_classname != null)
+            {
+                builder.AppendLine(_classname);
+                builder.AppendLine("{");
+            }
+
+            builder.AppendLine("private static readonly byte[] Certificate = ");
+            builder.AppendLine("{");
+
+            int i = 0;
+            foreach (char ch in content)
+            {
+                if (i % _width == 0)
+                {
+                    if (i != 0)
+                    {
+                        builder.AppendLine();
+                    }
+                    builder.Append("     ");
+                }
+
+                builder.Append($"0x{Convert.ToByte(ch):x2}");
+
+                if (i < content.Length - 1)
+                {
+                    builder.Append(", ");
+                }
+
+                i++;
+            }
+
+            builder.AppendLine();
+            builder.AppendLine("};");
+
+            if (_namespace != null)
+            {
+                builder.AppendLine("}");
+
+                if (_classname == null)
+                {
+                    builder.Append(";");
+                }
+            }
+
+            if (_classname != null)
+            {
+                builder.AppendLine("};");
+            }
+
+            return builder.ToString();
+        }
         private static void Parse(Parameters parameters, string[] args)
         {
             Action<string> currentCallback = null;
@@ -180,54 +246,6 @@ namespace Bytewizer.Commandline
             currentCallback?.Invoke(null);
         }
 
-        public static string ExportToPem(X509Certificate2 cert)
-        {
-            StringBuilder builder = new StringBuilder();
-
-            builder.AppendLine("-----BEGIN CERTIFICATE-----");
-            builder.AppendLine(Convert.ToBase64String(cert.Export(X509ContentType.Cert), Base64FormattingOptions.InsertLineBreaks));
-            builder.AppendLine("-----END CERTIFICATE-----");
-
-            return builder.ToString();
-        }
-
-        public static string ExportToCsharp(X509Certificate2 cert)
-        {
-            StringBuilder builder = new StringBuilder();
-
-            var content = ExportToPem(cert);
-
-            builder.AppendLine("private static readonly byte[] Certificate = ");
-            builder.AppendLine("{");
-
-            int i = 0;
-            foreach (char ch in content)
-            {
-                if (i % _width == 0)
-                {
-                    if (i != 0)
-                    {
-                        builder.AppendLine();
-                    }
-                    builder.Append("     ");
-                }
-
-                builder.Append($"0x{Convert.ToByte(ch):x2}");
-
-                if (i < content.Length - 1)
-                {
-                    builder.Append(", ");
-                }
-
-                i++;
-            }
-
-            builder.AppendLine();
-            builder.AppendLine("};");
-
-            return builder.ToString();
-        }
-
         private static void ShowHelp()
         {
             var name = AppDomain.CurrentDomain.FriendlyName;
@@ -243,6 +261,8 @@ namespace Bytewizer.Commandline
             Console.WriteLine(" --path        Output chain root certificate as base-64 encoded PEM format to file.");
             Console.WriteLine(" --code        Set output format as csharp source code array.");
             Console.WriteLine(" --width       Width of the source code array output (default 18).");
+            Console.WriteLine(" --namespace   Namespace used when creating code array output.");
+            Console.WriteLine(" --classname   Class name structure used when creating code array output.");
             Console.WriteLine();
 
             Environment.Exit(0);
